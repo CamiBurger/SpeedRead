@@ -10,6 +10,9 @@ enum Keys {
     static let accent = "accent"
     static let hotKeyCode = "hotKeyCode"
     static let hotKeyMods = "hotKeyMods"
+    static let hotKeyEnabled = "hotKeyEnabled"
+    static let serviceEnabled = "serviceEnabled"
+    static let menuBarEnabled = "menuBarEnabled"
 }
 
 /// Default values used when a key has never been written.
@@ -100,5 +103,10 @@ extension UserDefaults {
     }
     var punctuationPausesEnabled: Bool {
         object(forKey: Keys.punctuationPauses) == nil ? Defaults.punctuationPauses : bool(forKey: Keys.punctuationPauses)
+    }
+
+    /// Bool that defaults to `true` when the key has never been written.
+    func flag(_ key: String) -> Bool {
+        object(forKey: key) == nil ? true : bool(forKey: key)
     }
 }

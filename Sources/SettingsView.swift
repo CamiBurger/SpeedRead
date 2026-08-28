@@ -9,6 +9,11 @@ struct SettingsView: View {
     @AppStorage(Keys.fontSize) private var fontSize: Double = Defaults.fontSize
     @AppStorage(Keys.appearance) private var appearance: Appearance = .system
     @AppStorage(Keys.accent) private var accent: AccentChoice = .system
+    @AppStorage(Keys.hotKeyEnabled) private var hotKeyEnabled = true
+    @AppStorage(Keys.serviceEnabled) private var serviceEnabled = true
+    @AppStorage(Keys.menuBarEnabled) private var menuBarEnabled = true
+
+    @State private var launchAtLogin = LoginItem.isEnabled
 
     var body: some View {
         Form {
@@ -49,8 +54,25 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
             }
 
+            Section("Startup & Integration") {
+                Toggle("Launch SpeedRead at login", isOn: $launchAtLogin)
+                    .onChange(of: launchAtLogin) { _, on in
+                        if !LoginItem.setEnabled(on) { launchAtLogin = LoginItem.isEnabled }
+                    }
+                Toggle("Show SpeedRead in the menu bar", isOn: $menuBarEnabled)
+                Toggle("Add “speedRead” to the right‑click menu", isOn: $serviceEnabled)
+                    .onChange(of: serviceEnabled) { _, on in ServiceGate.apply(enabled: on) }
+                if !serviceEnabled {
+                    Button("Open Services settings…") { ServiceGate.openSystemSettings() }
+                        .font(.caption)
+                }
+            }
+
             Section("Global Shortcut") {
+                Toggle("Enable the global keyboard shortcut", isOn: $hotKeyEnabled)
+                    .onChange(of: hotKeyEnabled) { _, on in HotKeyManager.shared.setEnabled(on) }
                 HotKeyRecorder()
+                    .disabled(!hotKeyEnabled)
                 Text("Select text in any app, then press this shortcut. The first use asks for Accessibility permission so SpeedRead can copy the selection.")
                     .font(.caption)
                     .foregroundStyle(.secondary)

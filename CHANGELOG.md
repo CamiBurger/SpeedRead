@@ -3,6 +3,10 @@
 ## [Unreleased]
 
 ### Added
+- Settings button (gear) in the main window's toolbar.
+- Startup & Integration toggles in Settings: launch at login (`SMAppService`),
+  show in menu bar, add the right-click Services entry, enable the global shortcut.
+  Each takes effect immediately.
 - RSVP reader: one word at a time with a pinned Optimal Recognition Point pivot.
 - Speed slider (100–800 WPM), adjustable live during playback.
 - Transport: play/pause, rewind, restart, step, drag-to-seek progress bar.

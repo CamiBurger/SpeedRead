@@ -15,9 +15,21 @@ final class HotKeyManager {
 
     private init() {}
 
+    var isEnabled: Bool { UserDefaults.standard.flag(Keys.hotKeyEnabled) }
+
     func start() {
         installHandlerIfNeeded()
-        reregister()
+        if isEnabled { reregister() }
+    }
+
+    func setEnabled(_ enabled: Bool) {
+        UserDefaults.standard.set(enabled, forKey: Keys.hotKeyEnabled)
+        if enabled {
+            installHandlerIfNeeded()
+            reregister()
+        } else {
+            unregister()
+        }
     }
 
     var currentKeyCode: UInt32 {
@@ -33,14 +45,18 @@ final class HotKeyManager {
     func setHotKey(keyCode: UInt32, modifiers: UInt32) {
         UserDefaults.standard.set(Int(keyCode), forKey: Keys.hotKeyCode)
         UserDefaults.standard.set(Int(modifiers), forKey: Keys.hotKeyMods)
-        reregister()
+        if isEnabled { reregister() }
     }
 
-    private func reregister() {
+    private func unregister() {
         if let ref = hotKeyRef {
             UnregisterEventHotKey(ref)
             hotKeyRef = nil
         }
+    }
+
+    private func reregister() {
+        unregister()
         let hotKeyID = EventHotKeyID(signature: fourCharCode("SPRD"), id: 1)
         var ref: EventHotKeyRef?
         let status = RegisterEventHotKey(

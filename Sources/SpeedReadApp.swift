@@ -3,6 +3,7 @@ import SwiftUI
 @main
 struct SpeedReadApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    @AppStorage(Keys.menuBarEnabled) private var menuBarEnabled = true
 
     var body: some Scene {
         WindowGroup("SpeedRead", id: "main") {
@@ -31,7 +32,7 @@ struct SpeedReadApp: App {
                 .appChrome()
         }
 
-        MenuBarExtra("SpeedRead", systemImage: "forward.fill") {
+        MenuBarExtra("SpeedRead", systemImage: "forward.fill", isInserted: $menuBarEnabled) {
             Button("Open SpeedRead") { AppRouter.shared.openMainWindow() }
             Button("Speed Read Clipboard") { AppRouter.shared.speedReadClipboard() }
             Divider()

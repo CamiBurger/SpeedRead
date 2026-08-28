@@ -29,8 +29,9 @@ and a global hotkey.
 - **Right‑click → Services → speedRead** on selected text in any app.
 - **Global hotkey** (default ⇧⌥⌘T) — select text anywhere, press it, start reading.
 - **Keyboard in the reader** — Space play/pause, ←/→ step, R restart.
-- **Settings** — default speed, rewind distance, punctuation pauses, word size,
-  accent color, and the hotkey.
+- **Settings** (⚙️ in the window's top-right, or ⌘,) — default speed, rewind
+  distance, punctuation pauses, word size, accent color, the hotkey, and toggles
+  for launch-at-login, menu bar icon, the right-click entry, and the shortcut.
 - **Follows your system** — light/dark and accent color automatically, or pick a
   fixed theme and accent (any of the macOS accent colors).
 - **No network** — text you read never leaves your Mac.

@@ -6,7 +6,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.servicesProvider = serviceProvider
-        NSUpdateDynamicServices()
+        ServiceGate.apply(enabled: UserDefaults.standard.flag(Keys.serviceEnabled))
         HotKeyManager.shared.start()
     }
 
@@ -30,6 +30,10 @@ final class ServiceProvider: NSObject {
         userData: String?,
         error: AutoreleasingUnsafeMutablePointer<NSString?>?
     ) {
+        guard UserDefaults.standard.flag(Keys.serviceEnabled) else {
+            error?.pointee = "SpeedRead's right-click entry is turned off in its settings." as NSString
+            return
+        }
         guard let text = pboard.string(forType: .string), !text.isEmpty else {
             error?.pointee = "SpeedRead: no text was selected." as NSString
             return

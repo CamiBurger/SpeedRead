@@ -52,6 +52,14 @@ struct InputView: View {
         }
         .padding(16)
         .frame(minWidth: 460, minHeight: 380)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                SettingsLink {
+                    Image(systemName: "gearshape")
+                }
+                .help("Settings")
+            }
+        }
         .onAppear {
             AppRouter.shared.registerOpenWindow { openWindow(id: $0) }
         }
