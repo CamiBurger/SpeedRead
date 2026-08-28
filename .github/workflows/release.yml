@@ -1,6 +1,8 @@
 name: Release
 
 # Cut a release:  git tag v1.0 && git push origin v1.0
+# A tag containing a hyphen (v1.0.0-rc1, v0.9-beta) is published as a pre-release.
+# An unsigned build is always published as a pre-release.
 #
 # For a Gatekeeper-passing DMG, set these repo secrets (Settings → Secrets → Actions):
 #   MACOS_CERTIFICATE       base64 of your Developer ID Application .p12
@@ -62,7 +64,25 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          DMG=$(ls dist/*.dmg)
           NOTES="$RUNNER_TEMP/notes.md"
-          printf '**SHA-256**\n```\n%s\n```\n' "$(shasum -a 256 dist/*.dmg)" > "$NOTES"
-          gh release create "$GITHUB_REF_NAME" dist/*.dmg \
-            --title "$GITHUB_REF_NAME" --generate-notes --notes-file "$NOTES"
+          : > "$NOTES"
+
+          PRERELEASE=""
+          [[ "$GITHUB_REF_NAME" == *-* ]] && PRERELEASE="--prerelease"
+
+          if [[ -z "${DEVELOPER_ID_APP:-}" ]]; then
+            PRERELEASE="--prerelease"
+            {
+              echo '> **This build is not signed or notarized.** macOS will say it'
+              echo '> "cannot be opened because Apple cannot check it for malicious software."'
+              echo '> To open it anyway: right-click SpeedRead.app -> Open -> Open, or run'
+              echo '> `xattr -dr com.apple.quarantine /Applications/SpeedRead.app`'
+              echo
+            } >> "$NOTES"
+          fi
+
+          printf '**SHA-256**\n```\n%s\n```\n' "$(shasum -a 256 "$DMG")" >> "$NOTES"
+
+          gh release create "$GITHUB_REF_NAME" "$DMG" \
+            --title "$GITHUB_REF_NAME" --generate-notes --notes-file "$NOTES" $PRERELEASE
