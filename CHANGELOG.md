@@ -8,7 +8,7 @@
 - Transport: play/pause, rewind, restart, step, drag-to-seek progress bar.
 - Reader keyboard shortcuts: Space, ←/→, R.
 - macOS Service: "speedRead" on selected text in any app.
-- Configurable global hotkey (default ⌥⌘R) with pasteboard-safe selection capture.
+- Configurable global hotkey (default ⇧⌥⌘T) with pasteboard-safe selection capture.
 - Settings: default speed, rewind distance, punctuation pauses, word size, theme,
   accent color, hotkey.
 - System appearance matching, plus an accent-color menu (System or any of the

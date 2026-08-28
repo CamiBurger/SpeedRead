@@ -100,7 +100,7 @@ dmg (pipeline test only).
   - [ ] Paste text → Reader plays; slider, pause/resume, rewind, restart, drag‑seek.
   - [ ] Right‑click selected text in Safari/TextEdit → **Services → speedRead**
         launches and loads it (may need `pbs -flush` or a logout on first install).
-  - [ ] Global hotkey ⌥⌘R → Accessibility prompt appears, grant it, hotkey works.
+  - [ ] Global hotkey ⇧⌥⌘T → Accessibility prompt appears, grant it, hotkey works.
   - [ ] Quit + relaunch → Accessibility grant persists (it should now, with a
         stable Developer ID identity; adhoc builds lost it every rebuild).
   - [ ] Settings persist; theme = Match System follows light/dark + accent.

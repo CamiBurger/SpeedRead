@@ -27,7 +27,7 @@ and a global hotkey.
   restart, step, and a drag‑to‑seek progress bar.
 - **Speed slider**, 100–800 WPM, adjustable live while it's playing.
 - **Right‑click → Services → speedRead** on selected text in any app.
-- **Global hotkey** (default ⌥⌘R) — select text anywhere, press it, start reading.
+- **Global hotkey** (default ⇧⌥⌘T) — select text anywhere, press it, start reading.
 - **Keyboard in the reader** — Space play/pause, ←/→ step, R restart.
 - **Settings** — default speed, rewind distance, punctuation pauses, word size,
   accent color, and the hotkey.
@@ -67,7 +67,7 @@ Three ways to start a reading session:
 |---|---|
 | **Paste** | Open SpeedRead, paste or type into the box, click **Speed Read**. |
 | **Right‑click** | Select text in any app → right‑click → Services → **speedRead**. |
-| **Hotkey** | Select text anywhere → press **⌥⌘R**. |
+| **Hotkey** | Select text anywhere → press **⇧⌥⌘T**. |
 
 <div align="center">
 <img src="docs/settings.png" width="440" alt="SpeedRead settings">

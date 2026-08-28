@@ -10,8 +10,8 @@ final class HotKeyManager {
     private var handlerRef: EventHandlerRef?
     private var handlerInstalled = false
 
-    static let defaultKeyCode = UInt32(kVK_ANSI_R)
-    static let defaultModifiers = UInt32(cmdKey | optionKey)
+    static let defaultKeyCode = UInt32(kVK_ANSI_T)
+    static let defaultModifiers = UInt32(cmdKey | optionKey | shiftKey)
 
     private init() {}
 
