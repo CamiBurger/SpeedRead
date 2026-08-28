@@ -24,12 +24,9 @@
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.productivity</string>
-	<!-- Run as a menu-bar agent: no Dock icon, no ⌘-Tab entry. The app stays
-	     resident for the global hotkey and the Services entry; ⌘Q hides it
-	     rather than quitting (see SpeedReadApp.commands). Real quit is in the
-	     menu bar item. -->
-	<key>LSUIElement</key>
-	<true/>
+	<!-- Presentation is dynamic: the app launches as a normal windowed app and
+	     drops its Dock icon / ⌘-Tab entry only while running headless as a
+	     background agent. See PresentationController. -->
 	<key>NSHumanReadableCopyright</key>
 	<string></string>
 	<key>NSPrincipalClass</key>

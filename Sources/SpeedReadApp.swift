@@ -20,13 +20,12 @@ struct SpeedReadApp: App {
                 .keyboardShortcut("r", modifiers: [.command, .shift])
             }
 
-            // SpeedRead is a background agent: ⌘Q just hides it so the global
-            // hotkey and Services entry keep working. Quit for real from the
-            // menu bar item.
+            // ⌘Q quits for real — unless "Background Service" is on, in which
+            // case it closes every window and sinks to a background agent so
+            // the hotkey / menu bar / right-click entry keep working.
             CommandGroup(replacing: .appTermination) {
-                Button("Hide SpeedRead") {
-                    AppRouter.shared.engine.pause()
-                    NSApp.hide(nil)
+                Button("Quit SpeedRead") {
+                    PresentationController.handleCloseRequest()
                 }
                 .keyboardShortcut("q", modifiers: .command)
             }
@@ -49,7 +48,7 @@ struct SpeedReadApp: App {
             Button("Speed Read Clipboard") { AppRouter.shared.speedReadClipboard() }
             Divider()
             SettingsLink { Text("Settings…") }
-            Button("Quit SpeedRead") { NSApplication.shared.terminate(nil) }
+            Button("Quit SpeedRead") { PresentationController.terminate() }
                 .keyboardShortcut("q", modifiers: [.command, .shift])
         }
     }

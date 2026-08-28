@@ -6,13 +6,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.servicesProvider = serviceProvider
+        UserDefaults.standard.register(defaults: ["NSQuitAlwaysKeepsWindows": false])
         ServiceGate.apply(enabled: UserDefaults.standard.flag(Keys.serviceEnabled))
         HotKeyManager.shared.start()
+
+        let center = NotificationCenter.default
+        center.addObserver(forName: NSWindow.didBecomeKeyNotification, object: nil, queue: .main) { _ in
+            MainActor.assumeIsolated { PresentationController.update() }
+        }
+        // Must run synchronously and exclude the closing window: `willClose`
+        // fires before `isVisible` flips, so a deferred check would still see
+        // the window and re-assert `.regular`.
+        center.addObserver(forName: NSWindow.willCloseNotification, object: nil, queue: .main) { note in
+            let closing = note.object as? NSWindow
+            MainActor.assumeIsolated { PresentationController.update(ignoring: closing) }
+        }
+
+        PresentationController.update()
     }
 
-    /// Keep running for the Service / hotkey even with every window closed.
+    /// Terminate on last-window-close unless the app is meant to stay resident
+    /// as a background agent.
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-        false
+        MainActor.assumeIsolated { !PresentationController.shouldStayResident }
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {

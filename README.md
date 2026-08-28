@@ -30,8 +30,10 @@ and a global hotkey.
 - **Global hotkey** (default ⇧⌥⌘T) — select text anywhere, press it, start reading.
 - **Keyboard in the reader** — Space play/pause, ←/→ step, R restart.
 - **Settings** (⚙️ in the window's top-right, or ⌘,) — default speed, rewind
-  distance, punctuation pauses, word size, accent color, the hotkey, and toggles
-  for launch-at-login, menu bar icon, the right-click entry, and the shortcut.
+  distance, punctuation pauses, word size, accent color, the hotkey, launch-at-login,
+  and a **Background Service** toggle that keeps SpeedRead running after you close
+  its window (with the global shortcut, menu bar icon, and right-click entry
+  grouped under it).
 - **Follows your system** — light/dark and accent color automatically, or pick a
   fixed theme and accent (any of the macOS accent colors).
 - **No network** — text you read never leaves your Mac.
@@ -46,8 +48,11 @@ and a global hotkey.
 
 Requires **macOS 14 or later**, Apple Silicon or Intel.
 
-SpeedRead lives in the menu bar (▶). Closing all windows keeps it running for the
-Service and hotkey; quit from the menu bar item or ⌘Q.
+By default SpeedRead is a normal app — it's in the Dock and ⌘-Tab while a window
+is open, and ⌘Q quits it. Turn on **Background Service** in Settings to have it
+keep running after you close the window (out of the Dock, still listening for the
+global shortcut and reachable from the menu bar ▶); then ⌘Q sends it to the
+background instead of quitting, and a real quit is in the menu bar item.
 
 ### Permissions
 

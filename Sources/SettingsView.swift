@@ -12,6 +12,7 @@ struct SettingsView: View {
     @AppStorage(Keys.hotKeyEnabled) private var hotKeyEnabled = true
     @AppStorage(Keys.serviceEnabled) private var serviceEnabled = true
     @AppStorage(Keys.menuBarEnabled) private var menuBarEnabled = true
+    @AppStorage(Keys.backgroundServiceEnabled) private var backgroundServiceEnabled = true
 
     @State private var launchAtLogin = LoginItem.isEnabled
 
@@ -54,33 +55,46 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
             }
 
-            Section("Startup & Integration") {
+            Section("Background Service") {
+                Toggle("Keep SpeedRead running in the background", isOn: $backgroundServiceEnabled)
+                    .onChange(of: backgroundServiceEnabled) { _, _ in PresentationController.update() }
+                Text("When on, SpeedRead keeps running after you close its window (⌘Q) so the options below stay active in the background. When off, ⌘Q quits SpeedRead completely and those options only work while a SpeedRead window is open.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                VStack(alignment: .leading, spacing: 10) {
+                    Toggle("Global keyboard shortcut", isOn: $hotKeyEnabled)
+                        .onChange(of: hotKeyEnabled) { _, on in
+                            HotKeyManager.shared.setEnabled(on)
+                            PresentationController.update()
+                        }
+                    HotKeyRecorder()
+                        .disabled(!hotKeyEnabled)
+                    Text("Select text in any app, then press this shortcut. The first use asks for Accessibility permission so SpeedRead can copy the selection.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+
+                    Toggle("Menu bar icon", isOn: $menuBarEnabled)
+                        .onChange(of: menuBarEnabled) { _, _ in PresentationController.update() }
+
+                    Toggle("Add “speedRead” to the right‑click menu", isOn: $serviceEnabled)
+                        .onChange(of: serviceEnabled) { _, on in
+                            ServiceGate.apply(enabled: on)
+                            PresentationController.update()
+                        }
+                    if !serviceEnabled {
+                        Button("Open Services settings…") { ServiceGate.openSystemSettings() }
+                            .font(.caption)
+                    }
+                }
+                .padding(.leading, 12)
+            }
+
+            Section("Startup") {
                 Toggle("Launch SpeedRead at login", isOn: $launchAtLogin)
                     .onChange(of: launchAtLogin) { _, on in
                         if !LoginItem.setEnabled(on) { launchAtLogin = LoginItem.isEnabled }
                     }
-                Toggle("Show SpeedRead in the menu bar", isOn: $menuBarEnabled)
-                if !menuBarEnabled {
-                    Text("With the menu bar icon hidden, open SpeedRead with the global shortcut or the right‑click menu. Quit is only in the menu bar icon — re‑enable it here first.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                Toggle("Add “speedRead” to the right‑click menu", isOn: $serviceEnabled)
-                    .onChange(of: serviceEnabled) { _, on in ServiceGate.apply(enabled: on) }
-                if !serviceEnabled {
-                    Button("Open Services settings…") { ServiceGate.openSystemSettings() }
-                        .font(.caption)
-                }
-            }
-
-            Section("Global Shortcut") {
-                Toggle("Enable the global keyboard shortcut", isOn: $hotKeyEnabled)
-                    .onChange(of: hotKeyEnabled) { _, on in HotKeyManager.shared.setEnabled(on) }
-                HotKeyRecorder()
-                    .disabled(!hotKeyEnabled)
-                Text("Select text in any app, then press this shortcut. The first use asks for Accessibility permission so SpeedRead can copy the selection.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)

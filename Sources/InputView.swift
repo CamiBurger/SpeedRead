@@ -3,6 +3,7 @@ import AppKit
 
 struct InputView: View {
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.openSettings) private var openSettings
     @AppStorage(Keys.defaultWPM) private var defaultWPM: Double = Defaults.wpm
 
     @State private var text: String = ""
@@ -62,6 +63,16 @@ struct InputView: View {
         }
         .onAppear {
             AppRouter.shared.registerOpenWindow { openWindow(id: $0) }
+            showSettingsOnFirstRun()
         }
+    }
+
+    /// On the very first launch, open Settings once so the user can choose how
+    /// SpeedRead runs (background service, hotkey, menu bar). A stored flag
+    /// keeps it from reappearing.
+    private func showSettingsOnFirstRun() {
+        guard !UserDefaults.standard.bool(forKey: Keys.didFirstRunSetup) else { return }
+        UserDefaults.standard.set(true, forKey: Keys.didFirstRunSetup)
+        DispatchQueue.main.async { openSettings() }
     }
 }

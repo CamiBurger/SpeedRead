@@ -13,6 +13,8 @@ enum Keys {
     static let hotKeyEnabled = "hotKeyEnabled"
     static let serviceEnabled = "serviceEnabled"
     static let menuBarEnabled = "menuBarEnabled"
+    static let backgroundServiceEnabled = "backgroundServiceEnabled"
+    static let didFirstRunSetup = "didFirstRunSetup"
 }
 
 /// Default values used when a key has never been written.
