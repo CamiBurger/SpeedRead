@@ -7,6 +7,7 @@ enum Keys {
     static let punctuationPauses = "punctuationPauses"
     static let fontSize = "fontSize"
     static let appearance = "appearance"
+    static let accent = "accent"
     static let hotKeyCode = "hotKeyCode"
     static let hotKeyMods = "hotKeyMods"
 }
@@ -36,6 +37,51 @@ enum Appearance: String, CaseIterable, Identifiable {
         case .dark: return .dark
         }
     }
+}
+
+/// Accent (tint) choice: "System" follows the macOS accent color; the rest are
+/// the standard macOS accent palette.
+enum AccentChoice: String, CaseIterable, Identifiable {
+    case system, blue, purple, pink, red, orange, yellow, green, graphite
+    var id: String { rawValue }
+
+    var label: String {
+        self == .system ? "System" : rawValue.capitalized
+    }
+
+    /// nil = let SwiftUI follow `NSColor.controlAccentColor`.
+    var color: Color? {
+        switch self {
+        case .system:   return nil
+        case .blue:     return Color(nsColor: .systemBlue)
+        case .purple:   return Color(nsColor: .systemPurple)
+        case .pink:     return Color(nsColor: .systemPink)
+        case .red:      return Color(nsColor: .systemRed)
+        case .orange:   return Color(nsColor: .systemOrange)
+        case .yellow:   return Color(nsColor: .systemYellow)
+        case .green:    return Color(nsColor: .systemGreen)
+        case .graphite: return Color(nsColor: .systemGray)
+        }
+    }
+
+    /// A concrete color for the settings swatch (resolves "System" to the live accent).
+    var swatch: Color { color ?? Color(nsColor: .controlAccentColor) }
+}
+
+/// Applies the user's theme + accent choices to a scene's root view.
+struct AppChrome: ViewModifier {
+    @AppStorage(Keys.appearance) private var appearance: Appearance = .system
+    @AppStorage(Keys.accent) private var accent: AccentChoice = .system
+
+    func body(content: Content) -> some View {
+        content
+            .preferredColorScheme(appearance.colorScheme)
+            .tint(accent.color)
+    }
+}
+
+extension View {
+    func appChrome() -> some View { modifier(AppChrome()) }
 }
 
 func mmss(_ seconds: Int) -> String {

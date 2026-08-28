@@ -3,12 +3,11 @@ import SwiftUI
 @main
 struct SpeedReadApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    @AppStorage(Keys.appearance) private var appearance: Appearance = .system
 
     var body: some Scene {
         WindowGroup("SpeedRead", id: "main") {
             InputView()
-                .preferredColorScheme(appearance.colorScheme)
+                .appChrome()
         }
         .defaultSize(width: 560, height: 460)
         .commands {
@@ -22,14 +21,14 @@ struct SpeedReadApp: App {
 
         Window("Reader", id: "reader") {
             ReaderView()
-                .preferredColorScheme(appearance.colorScheme)
+                .appChrome()
         }
         .defaultSize(width: 760, height: 440)
         .windowResizability(.contentMinSize)
 
         Settings {
             SettingsView()
-                .preferredColorScheme(appearance.colorScheme)
+                .appChrome()
         }
 
         MenuBarExtra("SpeedRead", systemImage: "forward.fill") {

@@ -30,8 +30,9 @@ and a global hotkey.
 - **Global hotkey** (default ⌥⌘R) — select text anywhere, press it, start reading.
 - **Keyboard in the reader** — Space play/pause, ←/→ step, R restart.
 - **Settings** — default speed, rewind distance, punctuation pauses, word size,
-  and the hotkey.
-- **Follows your system** — light/dark and accent color, automatically.
+  accent color, and the hotkey.
+- **Follows your system** — light/dark and accent color automatically, or pick a
+  fixed theme and accent (any of the macOS accent colors).
 - **No network** — text you read never leaves your Mac.
 
 ## Install

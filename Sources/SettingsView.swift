@@ -8,6 +8,7 @@ struct SettingsView: View {
     @AppStorage(Keys.punctuationPauses) private var punctuationPauses: Bool = Defaults.punctuationPauses
     @AppStorage(Keys.fontSize) private var fontSize: Double = Defaults.fontSize
     @AppStorage(Keys.appearance) private var appearance: Appearance = .system
+    @AppStorage(Keys.accent) private var accent: AccentChoice = .system
 
     var body: some View {
         Form {
@@ -29,7 +30,21 @@ struct SettingsView: View {
                     ForEach(Appearance.allCases) { Text($0.label).tag($0) }
                 }
                 .pickerStyle(.segmented)
-                Text("“Match System” follows macOS light/dark and your accent color automatically.")
+
+                Picker("Accent color", selection: $accent) {
+                    ForEach(AccentChoice.allCases) { choice in
+                        HStack {
+                            Circle()
+                                .fill(choice.swatch)
+                                .frame(width: 12, height: 12)
+                                .overlay(Circle().strokeBorder(.primary.opacity(0.15)))
+                            Text(choice.label)
+                        }
+                        .tag(choice)
+                    }
+                }
+
+                Text("“System” follows the macOS appearance and accent color; the other accents override it.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
