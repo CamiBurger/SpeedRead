@@ -38,6 +38,7 @@ final class AppRouter {
             return
         }
 
+        NSApp.unhide(nil)
         NSApp.activate(ignoringOtherApps: true)
         open("reader")
         engine.play()
@@ -50,6 +51,7 @@ final class AppRouter {
     }
 
     func openMainWindow() {
+        NSApp.unhide(nil)
         NSApp.activate(ignoringOtherApps: true)
         openWindowAction?("main")
     }
@@ -58,6 +60,7 @@ final class AppRouter {
         guard let text = pendingText, let open = openWindowAction else { return }
         pendingText = nil
         engine.load(text: text)
+        NSApp.unhide(nil)
         NSApp.activate(ignoringOtherApps: true)
         open("reader")
         engine.play()

@@ -60,6 +60,11 @@ struct SettingsView: View {
                         if !LoginItem.setEnabled(on) { launchAtLogin = LoginItem.isEnabled }
                     }
                 Toggle("Show SpeedRead in the menu bar", isOn: $menuBarEnabled)
+                if !menuBarEnabled {
+                    Text("With the menu bar icon hidden, open SpeedRead with the global shortcut or the right‑click menu. Quit is only in the menu bar icon — re‑enable it here first.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
                 Toggle("Add “speedRead” to the right‑click menu", isOn: $serviceEnabled)
                     .onChange(of: serviceEnabled) { _, on in ServiceGate.apply(enabled: on) }
                 if !serviceEnabled {

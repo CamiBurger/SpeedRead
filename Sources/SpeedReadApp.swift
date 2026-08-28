@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 @main
 struct SpeedReadApp: App {
@@ -17,6 +18,17 @@ struct SpeedReadApp: App {
                     AppRouter.shared.speedReadClipboard()
                 }
                 .keyboardShortcut("r", modifiers: [.command, .shift])
+            }
+
+            // SpeedRead is a background agent: ⌘Q just hides it so the global
+            // hotkey and Services entry keep working. Quit for real from the
+            // menu bar item.
+            CommandGroup(replacing: .appTermination) {
+                Button("Hide SpeedRead") {
+                    AppRouter.shared.engine.pause()
+                    NSApp.hide(nil)
+                }
+                .keyboardShortcut("q", modifiers: .command)
             }
         }
 
@@ -38,6 +50,7 @@ struct SpeedReadApp: App {
             Divider()
             SettingsLink { Text("Settings…") }
             Button("Quit SpeedRead") { NSApplication.shared.terminate(nil) }
+                .keyboardShortcut("q", modifiers: [.command, .shift])
         }
     }
 }
