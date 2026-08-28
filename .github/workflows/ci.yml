@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate project
+        run: xcodegen generate
+
+      - name: Build (Debug, no signing)
+        run: |
+          set -o pipefail
+          xcodebuild -project SpeedRead.xcodeproj -scheme SpeedRead \
+            -configuration Debug -destination 'platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO clean build
+
+      - name: Icon generator still runs
+        run: swift Tools/makeicon.swift

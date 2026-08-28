@@ -1,0 +1,68 @@
+name: Release
+
+# Cut a release:  git tag v1.0 && git push origin v1.0
+#
+# For a Gatekeeper-passing DMG, set these repo secrets (Settings → Secrets → Actions):
+#   MACOS_CERTIFICATE       base64 of your Developer ID Application .p12
+#   MACOS_CERTIFICATE_PWD   the .p12 export password
+#   MACOS_SIGN_IDENTITY     "Developer ID Application: NAME (TEAMID)"
+#   NOTARY_APPLE_ID         Apple ID email
+#   NOTARY_TEAM_ID          10-char Team ID
+#   NOTARY_PWD              app-specific password
+# With no secrets set, the job still runs and publishes an UNSIGNED dmg (pipeline
+# test only — downloaders will hit Gatekeeper).
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-15
+    env:
+      MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+      MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+      DEVELOPER_ID_APP: ${{ secrets.MACOS_SIGN_IDENTITY }}
+      NOTARY_APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
+      NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
+      NOTARY_PWD: ${{ secrets.NOTARY_PWD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tooling
+        run: brew install xcodegen
+
+      - name: Import signing certificate
+        if: env.MACOS_CERTIFICATE != ''
+        run: |
+          KEYCHAIN="$RUNNER_TEMP/signing.keychain-db"
+          security create-keychain -p ci "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p ci "$KEYCHAIN"
+          echo "$MACOS_CERTIFICATE" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          security import "$RUNNER_TEMP/cert.p12" -k "$KEYCHAIN" \
+            -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k ci "$KEYCHAIN"
+          security list-keychains -d user -s "$KEYCHAIN" login.keychain-db
+
+      - name: Store notary credentials
+        if: env.NOTARY_APPLE_ID != ''
+        run: |
+          xcrun notarytool store-credentials speedread-notary \
+            --apple-id "$NOTARY_APPLE_ID" --team-id "$NOTARY_TEAM_ID" --password "$NOTARY_PWD"
+
+      - name: Build + package
+        env:
+          NOTARY_PROFILE: ${{ secrets.NOTARY_APPLE_ID != '' && 'speedread-notary' || '' }}
+        run: ./scripts/package.sh "${GITHUB_REF_NAME#v}"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NOTES="$RUNNER_TEMP/notes.md"
+          printf '**SHA-256**\n```\n%s\n```\n' "$(shasum -a 256 dist/*.dmg)" > "$NOTES"
+          gh release create "$GITHUB_REF_NAME" dist/*.dmg \
+            --title "$GITHUB_REF_NAME" --generate-notes --notes-file "$NOTES"
