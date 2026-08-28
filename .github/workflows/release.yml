@@ -82,7 +82,7 @@ jobs:
             } >> "$NOTES"
           fi
 
-          printf '**SHA-256**\n```\n%s\n```\n' "$(shasum -a 256 "$DMG")" >> "$NOTES"
+          printf '**SHA-256**\n```\n%s\n```\n' "$(cd "$(dirname "$DMG")" && shasum -a 256 "$(basename "$DMG")")" >> "$NOTES"
 
           gh release create "$GITHUB_REF_NAME" "$DMG" \
             --title "$GITHUB_REF_NAME" --generate-notes --notes-file "$NOTES" $PRERELEASE
